@@ -54,7 +54,10 @@ export default function DisplayPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch('/api/status')
+      const res = await fetch('/api/status', { 
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+      })
       if (res.ok) {
         setData(await res.json())
       }
