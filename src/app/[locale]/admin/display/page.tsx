@@ -166,14 +166,43 @@ export default function DisplayPage() {
     return data.config.corridorAfterCols?.includes(col) || false
   }
 
-  // Build the grid matching admin seats page style
+  // Calculate grid dimensions
+  const cellSize = isFullscreen ? 96 : 64 // w-24 = 96px, w-16 = 64px
+  const gap = 8 // gap-2 = 8px
+  const corridorWidth = 6 // Wider corridor line
+
+  // Build the grid with continuous corridor lines
   const renderGrid = () => {
-    const elements: JSX.Element[] = []
+    const seats: JSX.Element[] = []
+    const rowLabels: JSX.Element[] = []
     
+    // Calculate column positions accounting for corridors
+    const getColPosition = (col: number) => {
+      let pos = col * (cellSize + gap)
+      // Add corridor widths for corridors before this column
+      for (let c = 0; c < col; c++) {
+        if (hasColCorridorAfter(c)) {
+          pos += corridorWidth + gap
+        }
+      }
+      return pos
+    }
+
+    // Calculate row positions accounting for corridors (rows are reversed for display)
+    const getRowPosition = (displayRow: number) => {
+      const actualRow = data.config.totalRows - 1 - displayRow
+      let pos = actualRow * (cellSize + gap)
+      // Add corridor widths for corridors after rows above this one
+      for (let r = data.config.totalRows - 1; r > displayRow; r--) {
+        if (hasRowCorridorAfter(r)) {
+          pos += corridorWidth + gap
+        }
+      }
+      return pos
+    }
+
+    // Render seats
     for (let displayRow = data.config.totalRows - 1; displayRow >= 0; displayRow--) {
-      // Add row of seats with column corridors
-      const cells: JSX.Element[] = []
-      
       for (let col = 0; col < data.config.seatsPerRow; col++) {
         let seatNumber: number | null = null
 
@@ -189,73 +218,110 @@ export default function DisplayPage() {
 
         // In custom layout mode, skip cells without assigned seats
         if (data.config.useCustomLayout && !seatNumber) {
-          // Add an invisible placeholder to maintain grid alignment
-          cells.push(
-            <div
-              key={`${displayRow}-${col}`}
-              className={`w-14 h-14 md:w-16 md:h-16 ${isFullscreen ? 'w-24 h-24' : ''}`}
-            />
-          )
-        } else {
-          cells.push(
-            <div
-              key={`${displayRow}-${col}`}
-              className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex flex-col items-center justify-center transition-all duration-500 ease-in-out transform hover:scale-105 ${
-                seatNumber 
-                  ? getStatusColor(status) 
-                  : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 text-gray-400 dark:text-slate-600'
-              } ${isFullscreen ? 'w-24 h-24' : ''} ${status === 'need-help' ? 'scale-105 shadow-lg shadow-red-500/50 dark:shadow-red-500/30' : ''}`}
-            >
-              {seatNumber && (
-                <>
-                  <span className={`font-bold ${isFullscreen ? 'text-xl' : 'text-sm'}`}>
-                    {seatNumber}
-                  </span>
-                  {student?.name && (
-                    <span className={`truncate max-w-full px-1 ${isFullscreen ? 'text-xs' : 'text-[10px]'} opacity-80`}>
-                      {student.name}
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
-          )
+          continue
         }
 
-        // Add column corridor if needed (single line)
-        if (hasColCorridorAfter(col) && col < data.config.seatsPerRow - 1) {
-          cells.push(
-            <div
-              key={`col-corridor-${displayRow}-${col}`}
-              className="w-[2px] bg-amber-500 dark:bg-amber-500/50 self-stretch mx-1"
-            />
-          )
-        }
-      }
-      
-      elements.push(
-        <div 
-          key={`row-${displayRow}`} 
-          className="flex gap-2 items-center justify-center"
-        >
-          {cells}
-          <span className="text-gray-500 dark:text-slate-500 text-sm ml-2 w-16">Row {displayRow + 1}</span>
-        </div>
-      )
-      
-      // Add row corridor if exists after this row (single line)
-      if (hasRowCorridorAfter(displayRow) && displayRow > 0) {
-        elements.push(
-          <div 
-            key={`corridor-${displayRow}`} 
-            className="h-[2px] bg-amber-500 dark:bg-amber-500/50 my-1 mx-auto"
-            style={{ width: `${data.config.seatsPerRow * 72 + (data.config.seatsPerRow - 1) * 8}px` }}
-          />
+        seats.push(
+          <div
+            key={`seat-${displayRow}-${col}`}
+            className={`absolute rounded-lg border-2 flex flex-col items-center justify-center transition-all duration-500 ease-in-out transform hover:scale-105 ${
+              seatNumber 
+                ? getStatusColor(status) 
+                : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 text-gray-400 dark:text-slate-600'
+            } ${status === 'need-help' ? 'scale-105 shadow-lg shadow-red-500/50 dark:shadow-red-500/30' : ''}`}
+            style={{
+              width: cellSize,
+              height: cellSize,
+              left: getColPosition(col),
+              top: getRowPosition(displayRow),
+            }}
+          >
+            {seatNumber && (
+              <>
+                <span className={`font-bold ${isFullscreen ? 'text-xl' : 'text-sm'}`}>
+                  {seatNumber}
+                </span>
+                {student?.name && (
+                  <span className={`truncate max-w-full px-1 ${isFullscreen ? 'text-xs' : 'text-[10px]'} opacity-80`}>
+                    {student.name}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
         )
       }
+
+      // Row label
+      const lastColPos = getColPosition(data.config.seatsPerRow - 1)
+      rowLabels.push(
+        <span 
+          key={`label-${displayRow}`}
+          className="absolute text-gray-500 dark:text-slate-500 text-sm whitespace-nowrap"
+          style={{
+            left: lastColPos + cellSize + 12,
+            top: getRowPosition(displayRow) + cellSize / 2 - 10,
+          }}
+        >
+          Row {displayRow + 1}
+        </span>
+      )
     }
-    
-    return elements
+
+    // Calculate total grid dimensions
+    const totalWidth = getColPosition(data.config.seatsPerRow - 1) + cellSize
+    const totalHeight = getRowPosition(0) + cellSize
+
+    // Render continuous vertical corridors
+    const verticalCorridors = data.config.corridorAfterCols?.map(col => {
+      if (col >= data.config.seatsPerRow - 1) return null
+      const xPos = getColPosition(col) + cellSize + gap / 2
+      return (
+        <div
+          key={`v-corridor-${col}`}
+          className="absolute bg-amber-500 dark:bg-amber-400 rounded-full"
+          style={{
+            width: corridorWidth,
+            height: totalHeight,
+            left: xPos - corridorWidth / 2,
+            top: 0,
+          }}
+        />
+      )
+    }) || []
+
+    // Render continuous horizontal corridors
+    const horizontalCorridors = data.config.corridorAfterRows?.map(row => {
+      if (row <= 0) return null
+      const yPos = getRowPosition(row) - gap / 2
+      return (
+        <div
+          key={`h-corridor-${row}`}
+          className="absolute bg-amber-500 dark:bg-amber-400 rounded-full"
+          style={{
+            width: totalWidth,
+            height: corridorWidth,
+            left: 0,
+            top: yPos - corridorWidth / 2,
+          }}
+        />
+      )
+    }) || []
+
+    return (
+      <div 
+        className="relative"
+        style={{ 
+          width: totalWidth + 80, // Extra space for row labels
+          height: totalHeight,
+        }}
+      >
+        {horizontalCorridors}
+        {verticalCorridors}
+        {seats}
+        {rowLabels}
+      </div>
+    )
   }
 
   return (
