@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import SettingsModal from '@/components/SettingsModal'
 
 interface Student {
   id: string
@@ -110,8 +111,8 @@ export default function DisplayPage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-white text-xl">{t('common.loading')}</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center transition-colors">
+        <div className="text-gray-700 dark:text-white text-xl">{t('common.loading')}</div>
       </div>
     )
   }
@@ -140,11 +141,11 @@ export default function DisplayPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'online':
-        return 'border-emerald-500 bg-emerald-500/20 text-emerald-400'
+        return 'border-emerald-500 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
       case 'need-help':
-        return 'border-red-500 bg-red-500/20 text-red-400 animate-pulse'
+        return 'border-red-500 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 animate-pulse'
       default:
-        return 'border-slate-600 bg-slate-700/50 text-slate-500'
+        return 'border-gray-300 dark:border-slate-600 bg-gray-100 dark:bg-slate-700/50 text-gray-500 dark:text-slate-500'
     }
   }
 
@@ -183,7 +184,7 @@ export default function DisplayPage() {
             className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex flex-col items-center justify-center transition-all ${
               seatNumber 
                 ? getStatusColor(status) 
-                : 'border-slate-700 bg-slate-800/30 text-slate-600'
+                : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 text-gray-400 dark:text-slate-600'
             } ${isFullscreen ? 'w-24 h-24' : ''}`}
           >
             {seatNumber && (
@@ -206,7 +207,7 @@ export default function DisplayPage() {
           cells.push(
             <div
               key={`col-corridor-${displayRow}-${col}`}
-              className="w-[2px] bg-amber-500/50 self-stretch mx-1"
+              className="w-[2px] bg-amber-500 dark:bg-amber-500/50 self-stretch mx-1"
             />
           )
         }
@@ -218,7 +219,7 @@ export default function DisplayPage() {
           className="flex gap-2 items-center justify-center"
         >
           {cells}
-          <span className="text-slate-500 text-sm ml-2 w-16">Row {displayRow + 1}</span>
+          <span className="text-gray-500 dark:text-slate-500 text-sm ml-2 w-16">Row {displayRow + 1}</span>
         </div>
       )
       
@@ -227,7 +228,7 @@ export default function DisplayPage() {
         elements.push(
           <div 
             key={`corridor-${displayRow}`} 
-            className="h-[2px] bg-amber-500/50 my-1 mx-auto"
+            className="h-[2px] bg-amber-500 dark:bg-amber-500/50 my-1 mx-auto"
             style={{ width: `${data.config.seatsPerRow * 72 + (data.config.seatsPerRow - 1) * 8}px` }}
           />
         )
@@ -240,15 +241,15 @@ export default function DisplayPage() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col"
+      className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col transition-colors"
     >
       {/* Header */}
-      <header className="p-4 md:p-6 flex items-center justify-between border-b border-slate-800">
+      <header className="p-4 md:p-6 flex items-center justify-between border-b border-gray-200 dark:border-slate-800">
         <div className="flex items-center gap-4">
           {!isFullscreen && (
             <button
               onClick={() => router.push(`/${locale}/admin/dashboard`)}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-gray-200 dark:bg-slate-800 hover:bg-gray-300 dark:hover:bg-slate-700 text-gray-700 dark:text-white rounded-lg transition-colors flex items-center gap-2"
             >
               <span>←</span>
               <span>{t('common.back')}</span>
@@ -265,11 +266,11 @@ export default function DisplayPage() {
             </div>
           )}
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold text-white">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">
               {data.config.displayTitle}
             </h1>
             {data.branding?.organizationName && (
-              <p className="text-slate-400 text-sm md:text-base">
+              <p className="text-gray-500 dark:text-slate-400 text-sm md:text-base">
                 {data.branding.organizationName}
               </p>
             )}
@@ -277,10 +278,15 @@ export default function DisplayPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          {!isFullscreen && <LanguageSwitcher />}
+          {!isFullscreen && (
+            <>
+              <SettingsModal />
+              <LanguageSwitcher />
+            </>
+          )}
           <button
             onClick={toggleFullscreen}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-gray-200 dark:bg-slate-800 hover:bg-gray-300 dark:hover:bg-slate-700 text-gray-700 dark:text-white rounded-lg transition-colors"
           >
             {isFullscreen ? t('common.exitFullscreen') : t('common.fullscreen')}
           </button>
@@ -290,25 +296,25 @@ export default function DisplayPage() {
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 flex flex-col">
         {/* Front of Room indicator */}
-        <div className="text-slate-500 text-sm mb-4 text-center">↑ {t('common.frontOfRoom') || 'Front of Room'} ↑</div>
+        <div className="text-gray-500 dark:text-slate-500 text-sm mb-4 text-center">↑ {t('common.frontOfRoom') || 'Front of Room'} ↑</div>
 
         {/* Status Summary */}
         <div className="flex justify-center gap-4 md:gap-8 mb-6 md:mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-            <div className="w-4 h-4 rounded border-2 border-emerald-500 bg-emerald-500/20"></div>
-            <span className="text-emerald-400 font-semibold">
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg border border-emerald-300 dark:border-emerald-500/30">
+            <div className="w-4 h-4 rounded border-2 border-emerald-500 bg-emerald-200 dark:bg-emerald-500/20"></div>
+            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
               {t('common.ready')}: {counts.online}
             </span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-lg border border-red-500/30">
-            <div className="w-4 h-4 rounded border-2 border-red-500 bg-red-500/20 animate-pulse"></div>
-            <span className="text-red-400 font-semibold">
+          <div className="flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-500/20 rounded-lg border border-red-300 dark:border-red-500/30">
+            <div className="w-4 h-4 rounded border-2 border-red-500 bg-red-200 dark:bg-red-500/20 animate-pulse"></div>
+            <span className="text-red-700 dark:text-red-400 font-semibold">
               {t('common.needHelp')}: {counts.needHelp}
             </span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-slate-500/20 rounded-lg border border-slate-500/30">
-            <div className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-700/50"></div>
-            <span className="text-slate-400 font-semibold">
+          <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-slate-500/20 rounded-lg border border-gray-300 dark:border-slate-500/30">
+            <div className="w-4 h-4 rounded border-2 border-gray-400 dark:border-slate-600 bg-gray-200 dark:bg-slate-700/50"></div>
+            <span className="text-gray-600 dark:text-slate-400 font-semibold">
               {t('common.absent')}: {counts.absent}
             </span>
           </div>
@@ -322,7 +328,7 @@ export default function DisplayPage() {
         </div>
 
         {/* Back of Room indicator */}
-        <div className="text-slate-500 text-sm mt-4 text-center">↓ {t('common.backOfRoom') || 'Back of Room'} ↓</div>
+        <div className="text-gray-500 dark:text-slate-500 text-sm mt-4 text-center">↓ {t('common.backOfRoom') || 'Back of Room'} ↓</div>
       </main>
     </div>
   )
