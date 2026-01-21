@@ -23,14 +23,21 @@ interface Config {
   useCustomLayout: boolean
 }
 
+interface AttendanceCodes {
+  morningCode: string | null
+  afternoonCode: string | null
+}
+
 export default function AdminDashboardPage({ params: { locale } }: { params: { locale: string } }) {
   const t = useTranslations()
   const { data: session, status } = useSession()
   const router = useRouter()
   const [students, setStudents] = useState<Student[]>([])
   const [config, setConfig] = useState<Config | null>(null)
+  const [attendanceCodes, setAttendanceCodes] = useState<AttendanceCodes>({ morningCode: null, afternoonCode: null })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [savingCodes, setSavingCodes] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated' || (session?.user?.role !== 'admin')) {
@@ -46,17 +53,40 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
   const fetchData = async () => {
     try {
-      const [studentsRes, configRes] = await Promise.all([
+      const [studentsRes, configRes, codesRes] = await Promise.all([
         fetch('/api/admin/students'),
         fetch('/api/admin/config'),
+        fetch('/api/admin/attendance'),
       ])
       
       setStudents(await studentsRes.json())
       setConfig(await configRes.json())
+      if (codesRes.ok) {
+        const codes = await codesRes.json()
+        setAttendanceCodes({
+          morningCode: codes.morningCode || '',
+          afternoonCode: codes.afternoonCode || '',
+        })
+      }
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const saveAttendanceCodes = async () => {
+    setSavingCodes(true)
+    try {
+      await fetch('/api/admin/attendance', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(attendanceCodes),
+      })
+    } catch (error) {
+      console.error('Error saving attendance codes:', error)
+    } finally {
+      setSavingCodes(false)
     }
   }
 
@@ -263,6 +293,51 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             </div>
           </section>
         )}
+
+        {/* Attendance Codes */}
+        <section className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">📋 출석 코드</h2>
+          <p className="text-gray-500 dark:text-slate-400 text-sm mb-6">
+            오전 코드: 오후 1시까지 유효 | 오후 코드: 오후 9시까지 유효 (KST)
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                오전 코드 (4자리 숫자)
+              </label>
+              <input
+                type="text"
+                maxLength={4}
+                value={attendanceCodes.morningCode || ''}
+                onChange={(e) => setAttendanceCodes(prev => ({ ...prev, morningCode: e.target.value.replace(/\D/g, '') }))}
+                placeholder="0000"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white text-2xl text-center tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                오후 코드 (4자리 숫자)
+              </label>
+              <input
+                type="text"
+                maxLength={4}
+                value={attendanceCodes.afternoonCode || ''}
+                onChange={(e) => setAttendanceCodes(prev => ({ ...prev, afternoonCode: e.target.value.replace(/\D/g, '') }))}
+                placeholder="0000"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white text-2xl text-center tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={saveAttendanceCodes}
+            disabled={savingCodes}
+            className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white rounded-lg transition-colors"
+          >
+            {savingCodes ? t('common.loading') : '코드 저장'}
+          </button>
+        </section>
 
         {/* Student Management */}
         <section className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">

@@ -181,11 +181,11 @@ export default function DisplayPage() {
         cells.push(
           <div
             key={`${displayRow}-${col}`}
-            className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex flex-col items-center justify-center transition-all ${
+            className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex flex-col items-center justify-center transition-all duration-500 ease-in-out transform hover:scale-105 ${
               seatNumber 
                 ? getStatusColor(status) 
                 : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 text-gray-400 dark:text-slate-600'
-            } ${isFullscreen ? 'w-24 h-24' : ''}`}
+            } ${isFullscreen ? 'w-24 h-24' : ''} ${status === 'need-help' ? 'scale-105 shadow-lg shadow-red-500/50 dark:shadow-red-500/30' : ''}`}
           >
             {seatNumber && (
               <>
