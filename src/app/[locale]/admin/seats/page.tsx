@@ -312,7 +312,7 @@ export default function AdminSeatsPage({ params: { locale } }: { params: { local
                             </button>
                             {/* Column corridor indicator */}
                             {hasColCorridorAfter(colIndex) && colIndex < config.seatsPerRow - 1 && (
-                              <div className="w-4 h-16 bg-amber-500/20 border-x-2 border-dashed border-amber-500/50 mx-1" />
+                              <div className="w-[2px] h-16 bg-amber-500 mx-2" />
                             )}
                           </div>
                         )
@@ -325,11 +325,9 @@ export default function AdminSeatsPage({ params: { locale } }: { params: { local
                       <div className="flex gap-2 items-center my-1">
                         <div className="w-8" />
                         <div 
-                          className="h-4 bg-amber-500/20 border-y-2 border-dashed border-amber-500/50 flex items-center justify-center"
-                          style={{ width: `${config.seatsPerRow * 72 + (config.seatsPerRow - 1) * 8 + config.corridorAfterCols.filter(c => c < config.seatsPerRow - 1).length * 24}px` }}
-                        >
-                          <span className="text-amber-600 dark:text-amber-400 text-xs font-medium">AISLE</span>
-                        </div>
+                          className="h-[2px] bg-amber-500"
+                          style={{ width: `${config.seatsPerRow * 72 + (config.seatsPerRow - 1) * 8 + config.corridorAfterCols.filter(c => c < config.seatsPerRow - 1).length * 12}px` }}
+                        />
                       </div>
                     )}
                   </div>

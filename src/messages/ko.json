@@ -26,7 +26,10 @@
     "ready": "준비 완료",
     "absent": "부재",
     "fullscreen": "전체 화면",
-    "exitFullscreen": "전체 화면 종료"
+    "exitFullscreen": "전체 화면 종료",
+    "back": "돌아가기",
+    "frontOfRoom": "앞쪽",
+    "backOfRoom": "뒤쪽"
   },
   "landing": {
     "title": "부트캠프 상태 확인",

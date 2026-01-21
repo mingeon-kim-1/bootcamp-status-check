@@ -26,7 +26,10 @@
     "ready": "Ready",
     "absent": "Absent",
     "fullscreen": "Fullscreen",
-    "exitFullscreen": "Exit Fullscreen"
+    "exitFullscreen": "Exit Fullscreen",
+    "back": "Back",
+    "frontOfRoom": "Front of Room",
+    "backOfRoom": "Back of Room"
   },
   "landing": {
     "title": "Bootcamp Status Check",

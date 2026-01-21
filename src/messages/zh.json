@@ -26,7 +26,10 @@
     "ready": "准备就绪",
     "absent": "缺席",
     "fullscreen": "全屏",
-    "exitFullscreen": "退出全屏"
+    "exitFullscreen": "退出全屏",
+    "back": "返回",
+    "frontOfRoom": "前方",
+    "backOfRoom": "后方"
   },
   "landing": {
     "title": "训练营状态检查",

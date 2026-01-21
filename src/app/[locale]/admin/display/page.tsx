@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useTranslations } from 'next-intl'
+import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
@@ -44,6 +45,9 @@ interface StatusData {
 
 export default function DisplayPage() {
   const t = useTranslations()
+  const router = useRouter()
+  const params = useParams()
+  const locale = params.locale as string
   const [data, setData] = useState<StatusData | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -132,11 +136,11 @@ export default function DisplayPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'online':
-        return 'bg-green-500 shadow-lg shadow-green-500/30'
+        return 'border-emerald-500 bg-emerald-500/20 text-emerald-400'
       case 'need-help':
-        return 'bg-red-500 shadow-lg shadow-red-500/30 animate-pulse'
+        return 'border-red-500 bg-red-500/20 text-red-400 animate-pulse'
       default:
-        return 'bg-gray-600'
+        return 'border-slate-600 bg-slate-700/50 text-slate-500'
     }
   }
 
@@ -148,7 +152,7 @@ export default function DisplayPage() {
     return data.config.corridorAfterCols?.includes(col) || false
   }
 
-  // Build the grid with corridors
+  // Build the grid matching admin seats page style
   const renderGrid = () => {
     const elements: JSX.Element[] = []
     
@@ -172,22 +176,22 @@ export default function DisplayPage() {
         cells.push(
           <div
             key={`${displayRow}-${col}`}
-            className={`aspect-square rounded-lg flex items-center justify-center text-white font-bold transition-all duration-300 ${
+            className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex items-center justify-center font-bold transition-all ${
               seatNumber 
                 ? getStatusColor(status) 
-                : 'bg-slate-800/50'
-            } ${isFullscreen ? 'text-2xl' : 'text-lg'}`}
+                : 'border-slate-700 bg-slate-800/30 text-slate-600'
+            } ${isFullscreen ? 'w-20 h-20 text-2xl' : 'text-lg'}`}
           >
             {seatNumber || ''}
           </div>
         )
 
-        // Add column corridor if needed
+        // Add column corridor if needed (single line)
         if (hasColCorridorAfter(col) && col < data.config.seatsPerRow - 1) {
           cells.push(
             <div
               key={`col-corridor-${displayRow}-${col}`}
-              className="w-3 md:w-4 bg-amber-500/10 border-x border-dashed border-amber-500/30 self-stretch"
+              className="w-[2px] bg-amber-500/50 self-stretch mx-1"
             />
           )
         }
@@ -196,23 +200,21 @@ export default function DisplayPage() {
       elements.push(
         <div 
           key={`row-${displayRow}`} 
-          className="flex gap-2 justify-center"
+          className="flex gap-2 items-center justify-center"
         >
           {cells}
+          <span className="text-slate-500 text-sm ml-2 w-16">Row {displayRow + 1}</span>
         </div>
       )
       
-      // Add row corridor if exists after this row
+      // Add row corridor if exists after this row (single line)
       if (hasRowCorridorAfter(displayRow) && displayRow > 0) {
         elements.push(
           <div 
             key={`corridor-${displayRow}`} 
-            className="h-4 md:h-6 bg-amber-500/10 border-y border-dashed border-amber-500/30 flex items-center justify-center my-1"
-          >
-            <span className="text-amber-400/60 text-xs font-medium tracking-widest">
-              AISLE
-            </span>
-          </div>
+            className="h-[2px] bg-amber-500/50 my-1 mx-auto"
+            style={{ width: `${data.config.seatsPerRow * 72 + (data.config.seatsPerRow - 1) * 8}px` }}
+          />
         )
       }
     }
@@ -228,6 +230,15 @@ export default function DisplayPage() {
       {/* Header */}
       <header className="p-4 md:p-6 flex items-center justify-between border-b border-slate-800">
         <div className="flex items-center gap-4">
+          {!isFullscreen && (
+            <button
+              onClick={() => router.push(`/${locale}/admin/dashboard`)}
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              <span>←</span>
+              <span>{t('common.back')}</span>
+            </button>
+          )}
           {data.branding?.displayImagePath && (
             <div className="relative w-12 h-12 md:w-16 md:h-16">
               <Image
@@ -263,23 +274,26 @@ export default function DisplayPage() {
 
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 flex flex-col">
+        {/* Front of Room indicator */}
+        <div className="text-slate-500 text-sm mb-4 text-center">↑ {t('common.frontOfRoom') || 'Front of Room'} ↑</div>
+
         {/* Status Summary */}
         <div className="flex justify-center gap-4 md:gap-8 mb-6 md:mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-green-500"></div>
-            <span className="text-green-400 font-semibold">
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+            <div className="w-4 h-4 rounded border-2 border-emerald-500 bg-emerald-500/20"></div>
+            <span className="text-emerald-400 font-semibold">
               {t('common.ready')}: {counts.online}
             </span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-red-500 animate-pulse"></div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-lg border border-red-500/30">
+            <div className="w-4 h-4 rounded border-2 border-red-500 bg-red-500/20 animate-pulse"></div>
             <span className="text-red-400 font-semibold">
               {t('common.needHelp')}: {counts.needHelp}
             </span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-gray-500/20 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-gray-500"></div>
-            <span className="text-gray-400 font-semibold">
+          <div className="flex items-center gap-2 px-4 py-2 bg-slate-500/20 rounded-lg border border-slate-500/30">
+            <div className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-700/50"></div>
+            <span className="text-slate-400 font-semibold">
               {t('common.absent')}: {counts.absent}
             </span>
           </div>
@@ -287,26 +301,13 @@ export default function DisplayPage() {
 
         {/* Status Grid with Corridors */}
         <div className="flex-1 flex items-center justify-center overflow-auto">
-          <div className="w-full max-w-6xl flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             {renderGrid()}
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="mt-6 flex justify-center gap-6 text-sm text-slate-400">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-green-500"></div>
-            <span>{t('common.ready')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-red-500"></div>
-            <span>{t('common.needHelp')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-gray-600"></div>
-            <span>{t('common.absent')}</span>
-          </div>
-        </div>
+        {/* Back of Room indicator */}
+        <div className="text-slate-500 text-sm mt-4 text-center">↓ {t('common.backOfRoom') || 'Back of Room'} ↓</div>
       </main>
     </div>
   )
