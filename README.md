@@ -48,11 +48,6 @@ A real-time bootcamp status monitoring web application built with Next.js, featu
 
 5. Open [http://localhost:3000](http://localhost:3000)
 
-## Default Credentials
-
-- **Admin Username**: `admin`
-- **Admin Password**: `wrtnedu`
-
 ## Usage
 
 ### Admin Flow
