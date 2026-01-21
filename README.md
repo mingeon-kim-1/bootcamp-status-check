@@ -9,50 +9,99 @@ A real-time bootcamp status monitoring web application built with Next.js, featu
 - **Admin Dashboard**: Configure seats, manage students, customize branding
 - **Student Portal**: Easy sign-up and status control
 - **Fullscreen Mode**: Large display support for classroom monitoring
-- **Custom Seat Layout**: Manual seat number assignment for irregular arrangements
+- **Custom Seat Layout**: Manual seat number assignment with row/column corridors
 - **Organization Branding**: Upload logos and customize text for login/display screens
+- **Light/Dark Mode**: Automatic system detection with manual override
 
 ## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
-- **Database**: SQLite with Prisma ORM
+- **Database**: PostgreSQL (Vercel Postgres)
 - **Authentication**: NextAuth.js
 - **Internationalization**: next-intl
 - **Styling**: Tailwind CSS
+- **ORM**: Prisma
 
-## Getting Started
+## Deploy to Vercel
+
+### One-Click Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmingeon-kim-1%2Fbootcamp-status-check&env=NEXTAUTH_SECRET&envDescription=Generate%20with%3A%20openssl%20rand%20-base64%2032&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D)
+
+### Manual Deploy
+
+1. **Import to Vercel**
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Import your GitHub repository
+
+2. **Add Postgres Database**
+   - In your Vercel project, go to **Storage** tab
+   - Click **Create Database** → **Postgres**
+   - Connect it to your project (auto-adds env variables)
+
+3. **Set Environment Variables**
+   - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
+   - `NEXTAUTH_URL`: Your deployment URL (e.g., `https://your-app.vercel.app`)
+
+4. **Deploy & Initialize Database**
+   ```bash
+   # After first deploy, run from your local machine:
+   npx vercel env pull .env.local
+   npx prisma db push
+   npm run db:seed
+   ```
+
+## Local Development
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm
+- Node.js 18+
+- PostgreSQL database (or use Vercel Postgres)
 
 ### Installation
 
 1. Clone the repository
+
 2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Set up the database:
+3. Set up environment variables:
    ```bash
-   npx prisma migrate dev
+   cp .env.example .env.local
+   ```
+   
+   Edit `.env.local`:
+   ```
+   POSTGRES_PRISMA_URL="postgresql://..."
+   POSTGRES_URL_NON_POOLING="postgresql://..."
+   NEXTAUTH_SECRET="your-secret-here"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
+
+4. Push database schema:
+   ```bash
+   npx prisma db push
+   ```
+
+5. Seed the database:
+   ```bash
    npm run db:seed
    ```
 
-4. Start the development server:
+6. Start the development server:
    ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000)
+7. Open [http://localhost:3000](http://localhost:3000)
 
 ## Usage
 
 ### Admin Flow
 
-1. Log in at `/admin/login` with admin credentials
+1. Log in at `/admin/login`
 2. Configure bootcamp settings (seats per row, total rows, seat direction)
 3. Optionally set up custom seat layout at `/admin/seats`
 4. Upload organization branding at `/admin/branding`
@@ -103,12 +152,12 @@ Admin can change direction or use custom layout for irregular arrangements.
 ## Scripts
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
-npm run db:seed  # Seed database with admin account
-npm run db:reset # Reset database
+npm run dev       # Start development server
+npm run build     # Build for production
+npm run start     # Start production server
+npm run lint      # Run ESLint
+npm run db:seed   # Seed database with admin account
+npm run db:push   # Push schema to database
 ```
 
 ## License
