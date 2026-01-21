@@ -9,7 +9,6 @@ import SettingsModal from '@/components/SettingsModal'
 
 interface Student {
   id: string
-  email: string
   seatNumber: number
   status: string
   lastActive: string | null
@@ -433,7 +432,6 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
                 <thead>
                   <tr className="text-left text-gray-500 dark:text-slate-400 border-b border-gray-200 dark:border-slate-700">
                     <th className="pb-3 pr-4">{t('common.seatNumber')}</th>
-                    <th className="pb-3 pr-4">{t('common.email')}</th>
                     <th className="pb-3 pr-4">{t('common.status')}</th>
                     <th className="pb-3">{t('common.edit')}</th>
                   </tr>
@@ -441,8 +439,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
                 <tbody>
                   {students.map((student) => (
                     <tr key={student.id} className="border-b border-gray-100 dark:border-slate-700/50">
-                      <td className="py-3 pr-4 text-gray-900 dark:text-white font-medium">{student.seatNumber}</td>
-                      <td className="py-3 pr-4 text-gray-600 dark:text-slate-300">{student.email}</td>
+                      <td className="py-3 pr-4 text-gray-900 dark:text-white font-bold text-lg">{student.seatNumber}번</td>
                       <td className="py-3 pr-4">
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${

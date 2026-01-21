@@ -8,11 +8,9 @@ export async function GET() {
     const students = await prisma.student.findMany({
       select: {
         id: true,
-        email: true,
         seatNumber: true,
         status: true,
         lastActive: true,
-        isLocked: true,
         createdAt: true,
       },
       orderBy: { seatNumber: 'asc' },

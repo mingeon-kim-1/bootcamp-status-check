@@ -12,7 +12,6 @@ export async function GET() {
       prisma.student.findMany({
         select: {
           id: true,
-          name: true,
           seatNumber: true,
           status: true,
           lastActive: true,

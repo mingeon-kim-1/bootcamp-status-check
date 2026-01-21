@@ -3,6 +3,36 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 
+// Helper function to check if attendance code is valid
+async function isAttendanceCodeValid(code: string): Promise<boolean> {
+  const attendanceCode = await prisma.attendanceCode.findUnique({
+    where: { id: 'default' },
+  })
+
+  if (!attendanceCode) return false
+
+  // Get current time in KST (UTC+9)
+  const now = new Date()
+  const kstHour = (now.getUTCHours() + 9) % 24
+
+  // Morning code valid until 1 PM (13:00) KST
+  if (kstHour < 13 && attendanceCode.morningCode === code) {
+    return true
+  }
+
+  // Afternoon code valid until 9 PM (21:00) KST
+  if (kstHour >= 13 && kstHour < 21 && attendanceCode.afternoonCode === code) {
+    return true
+  }
+
+  // Also accept morning code if afternoon hasn't started or afternoon code in morning for flexibility
+  if (attendanceCode.morningCode === code || attendanceCode.afternoonCode === code) {
+    return true
+  }
+
+  return false
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -42,40 +72,54 @@ export const authOptions: NextAuthOptions = {
       id: 'student-login',
       name: 'Student Login',
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        seatNumber: { label: 'Seat Number', type: 'text' },
+        attendanceCode: { label: 'Attendance Code', type: 'text' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.seatNumber || !credentials?.attendanceCode) {
           return null
         }
 
-        const student = await prisma.student.findUnique({
-          where: { email: credentials.email },
+        const seatNumber = parseInt(credentials.seatNumber)
+        if (isNaN(seatNumber) || seatNumber < 1) {
+          return null
+        }
+
+        // Verify attendance code
+        const isCodeValid = await isAttendanceCodeValid(credentials.attendanceCode)
+        if (!isCodeValid) {
+          return null
+        }
+
+        // Find or create student
+        let student = await prisma.student.findUnique({
+          where: { seatNumber },
         })
 
         if (!student) {
-          return null
+          // Create new student record
+          student = await prisma.student.create({
+            data: {
+              seatNumber,
+              status: 'online',
+              lastActive: new Date(),
+              attendanceVerified: new Date(),
+            },
+          })
+        } else {
+          // Update existing student
+          student = await prisma.student.update({
+            where: { id: student.id },
+            data: {
+              status: 'online',
+              lastActive: new Date(),
+              attendanceVerified: new Date(),
+            },
+          })
         }
-
-        const isValid = await bcrypt.compare(credentials.password, student.passwordHash)
-
-        if (!isValid) {
-          return null
-        }
-
-        // Update student status to online
-        await prisma.student.update({
-          where: { id: student.id },
-          data: { 
-            status: 'online',
-            lastActive: new Date(),
-          },
-        })
 
         return {
           id: student.id,
-          email: student.email,
           seatNumber: student.seatNumber,
           role: 'student',
         }

@@ -8,7 +8,6 @@ import SettingsModal from '@/components/SettingsModal'
 
 interface Student {
   id: string
-  name: string | null
   seatNumber: number
   status: string
   lastActive: string | null
@@ -229,16 +228,9 @@ export default function DisplayPage() {
             }}
           >
             {seatNumber && (
-              <>
-                <span className={`font-bold ${isFullscreen ? 'text-xl' : 'text-sm'}`}>
-                  {seatNumber}
-                </span>
-                {student?.name && (
-                  <span className={`truncate max-w-full px-1 ${isFullscreen ? 'text-xs' : 'text-[10px]'} opacity-80`}>
-                    {student.name}
-                  </span>
-                )}
-              </>
+              <span className={`font-bold ${isFullscreen ? 'text-xl' : 'text-sm'}`}>
+                {seatNumber}
+              </span>
             )}
           </div>
         )

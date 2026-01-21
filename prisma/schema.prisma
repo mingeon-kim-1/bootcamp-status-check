@@ -30,16 +30,6 @@ model BootcampConfig {
   updatedAt       DateTime @updatedAt
 }
 
-model Branding {
-  id               String  @id @default("default")
-  loginImagePath   String?
-  loginText        String?
-  displayImagePath String?
-  displayText      String?
-  organizationName String?
-  updatedAt        DateTime @updatedAt
-}
-
 model SeatPosition {
   id         String  @id @default(uuid())
   seatNumber Int     @unique
@@ -50,24 +40,12 @@ model SeatPosition {
 
 model Student {
   id                  String   @id @default(uuid())
-  name                String?
-  email               String   @unique
   seatNumber          Int      @unique
-  passwordHash        String
   status              String   @default("offline") // offline, online, need-help
   lastActive          DateTime?
-  isLocked            Boolean  @default(true)
-  attendanceVerified  DateTime? // Last time attendance was verified (date only matters)
+  attendanceVerified  DateTime? // Last time attendance was verified
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-}
-
-// Pre-registered students by admin (before they sign up)
-model PreRegisteredStudent {
-  id         String @id @default(uuid())
-  name       String
-  seatNumber Int    @unique
-  createdAt  DateTime @default(now())
 }
 
 // Daily attendance codes set by admin

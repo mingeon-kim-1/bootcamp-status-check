@@ -15,8 +15,6 @@ export async function GET() {
       where: { id: session.user.id },
       select: {
         id: true,
-        name: true,
-        email: true,
         seatNumber: true,
         status: true,
         lastActive: true,
