@@ -151,10 +151,6 @@ export default function DisplayPage() {
   // Build the grid with corridors
   const renderGrid = () => {
     const elements: JSX.Element[] = []
-    const corridorCols = data.config.corridorAfterCols || []
-    
-    // Calculate how many column gaps we have
-    const totalCols = data.config.seatsPerRow + corridorCols.filter(c => c < data.config.seatsPerRow - 1).length
     
     for (let displayRow = data.config.totalRows - 1; displayRow >= 0; displayRow--) {
       // Add row of seats with column corridors
