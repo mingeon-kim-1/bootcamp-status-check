@@ -8,7 +8,7 @@ export const revalidate = 0
 // Public endpoint for real-time status display
 export async function GET() {
   try {
-    const [students, config, branding, seatPositions] = await Promise.all([
+    const [students, config, seatPositions] = await Promise.all([
       prisma.student.findMany({
         select: {
           id: true,
@@ -20,9 +20,6 @@ export async function GET() {
         orderBy: { seatNumber: 'asc' },
       }),
       prisma.bootcampConfig.findUnique({
-        where: { id: 'default' },
-      }),
-      prisma.branding.findUnique({
         where: { id: 'default' },
       }),
       prisma.seatPosition.findMany({
@@ -49,7 +46,6 @@ export async function GET() {
         corridorAfterRows,
         corridorAfterCols,
       },
-      branding,
       seatPositions,
       timestamp: new Date().toISOString(),
     })

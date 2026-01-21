@@ -208,7 +208,7 @@ export default function AdminSeatsPage({ params: { locale } }: { params: { local
         <nav className="mt-4 flex gap-4">
           <Link href={`/${locale}/admin/dashboard`} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors">{t('admin.config')}</Link>
           <Link href={`/${locale}/admin/seats`} className="px-4 py-2 bg-indigo-600 text-white rounded-lg">{t('admin.seats')}</Link>
-          <Link href={`/${locale}/admin/branding`} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors">{t('admin.branding')}</Link>
+          <Link href={`/${locale}/admin/students`} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors">{t('admin.studentManagement')}</Link>
           <Link href={`/${locale}/admin/display`} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">{t('admin.display')}</Link>
         </nav>
       </header>

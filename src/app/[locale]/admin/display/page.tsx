@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { useParams, useRouter } from 'next/navigation'
-import Image from 'next/image'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import SettingsModal from '@/components/SettingsModal'
 
@@ -25,12 +24,6 @@ interface Config {
   corridorAfterCols: number[]
 }
 
-interface Branding {
-  displayImagePath: string | null
-  displayText: string | null
-  organizationName: string | null
-}
-
 interface SeatPosition {
   seatNumber: number
   gridRow: number
@@ -41,7 +34,6 @@ interface SeatPosition {
 interface StatusData {
   students: Student[]
   config: Config
-  branding: Branding | null
   seatPositions: SeatPosition[]
 }
 
@@ -343,26 +335,9 @@ export default function DisplayPage() {
               <span>{t('common.back')}</span>
             </button>
           )}
-          {data.branding?.displayImagePath && (
-            <div className="relative w-12 h-12 md:w-16 md:h-16">
-              <Image
-                src={data.branding.displayImagePath}
-                alt="Logo"
-                fill
-                className="object-contain"
-              />
-            </div>
-          )}
-          <div>
-            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              {data.config.displayTitle}
-            </h1>
-            {data.branding?.organizationName && (
-              <p className="text-gray-500 dark:text-slate-400 text-sm md:text-base">
-                {data.branding.organizationName}
-              </p>
-            )}
-          </div>
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">
+            {data.config.displayTitle}
+          </h1>
         </div>
 
         <div className="flex items-center gap-4">
