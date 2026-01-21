@@ -50,6 +50,7 @@ model SeatPosition {
 
 model Student {
   id           String   @id @default(uuid())
+  name         String?
   email        String   @unique
   seatNumber   Int      @unique
   passwordHash String
@@ -58,4 +59,12 @@ model Student {
   isLocked     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+// Pre-registered students by admin (before they sign up)
+model PreRegisteredStudent {
+  id         String @id @default(uuid())
+  name       String
+  seatNumber Int    @unique
+  createdAt  DateTime @default(now())
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -11,6 +11,41 @@ export default function StudentSignupPage({ params: { locale } }: { params: { lo
   const router = useRouter()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [seatNumber, setSeatNumber] = useState('')
+  const [preRegisteredName, setPreRegisteredName] = useState<string | null>(null)
+  const [seatTaken, setSeatTaken] = useState(false)
+
+  // Check seat number when it changes
+  useEffect(() => {
+    const checkSeat = async () => {
+      if (!seatNumber || parseInt(seatNumber) < 1) {
+        setPreRegisteredName(null)
+        setSeatTaken(false)
+        return
+      }
+
+      try {
+        const res = await fetch(`/api/student/check-seat?seatNumber=${seatNumber}`)
+        const data = await res.json()
+        
+        if (data.taken) {
+          setSeatTaken(true)
+          setPreRegisteredName(null)
+        } else if (data.preRegistered) {
+          setSeatTaken(false)
+          setPreRegisteredName(data.name)
+        } else {
+          setSeatTaken(false)
+          setPreRegisteredName(null)
+        }
+      } catch {
+        // Ignore errors
+      }
+    }
+
+    const timer = setTimeout(checkSeat, 300)
+    return () => clearTimeout(timer)
+  }, [seatNumber])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -19,7 +54,6 @@ export default function StudentSignupPage({ params: { locale } }: { params: { lo
 
     const formData = new FormData(e.currentTarget)
     const email = formData.get('email') as string
-    const seatNumber = formData.get('seatNumber') as string
     const password = formData.get('password') as string
     const confirmPassword = formData.get('confirmPassword') as string
 
@@ -82,11 +116,51 @@ export default function StudentSignupPage({ params: { locale } }: { params: { lo
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-md">
           <div className="bg-white/80 dark:bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-gray-200 dark:border-white/20">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 text-center">
               {t('auth.studentSignupTitle')}
             </h1>
+            
+            {/* Welcome message for pre-registered students */}
+            {preRegisteredName && (
+              <div className="mb-6 p-4 bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-500/50 rounded-xl text-center">
+                <p className="text-emerald-800 dark:text-emerald-200 font-medium">
+                  🎉 {t('auth.welcomePreregistered') || `환영합니다, ${preRegisteredName}님!`}
+                </p>
+                <p className="text-emerald-700 dark:text-emerald-300 text-sm mt-1">
+                  {preRegisteredName}
+                </p>
+              </div>
+            )}
+
+            {!preRegisteredName && <div className="mb-6" />}
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="seatNumber" className="block text-sm font-medium text-gray-700 dark:text-emerald-200 mb-2">
+                  {t('common.seatNumber')}
+                </label>
+                <input
+                  type="number"
+                  id="seatNumber"
+                  name="seatNumber"
+                  min="1"
+                  required
+                  value={seatNumber}
+                  onChange={(e) => setSeatNumber(e.target.value)}
+                  className={`w-full px-4 py-3 bg-white dark:bg-white/10 border rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
+                    seatTaken 
+                      ? 'border-red-500 dark:border-red-500' 
+                      : preRegisteredName 
+                        ? 'border-emerald-500 dark:border-emerald-500' 
+                        : 'border-gray-300 dark:border-white/20'
+                  }`}
+                  placeholder="1"
+                />
+                {seatTaken && (
+                  <p className="text-red-500 text-sm mt-1">{t('auth.seatTaken')}</p>
+                )}
+              </div>
+
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-emerald-200 mb-2">
                   {t('common.email')}
@@ -98,21 +172,6 @@ export default function StudentSignupPage({ params: { locale } }: { params: { lo
                   required
                   className="w-full px-4 py-3 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   placeholder="student@example.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="seatNumber" className="block text-sm font-medium text-gray-700 dark:text-emerald-200 mb-2">
-                  {t('common.seatNumber')}
-                </label>
-                <input
-                  type="number"
-                  id="seatNumber"
-                  name="seatNumber"
-                  min="1"
-                  required
-                  className="w-full px-4 py-3 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="1"
                 />
               </div>
 
@@ -154,7 +213,7 @@ export default function StudentSignupPage({ params: { locale } }: { params: { lo
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || seatTaken}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 dark:disabled:bg-emerald-800 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-all"
               >
                 {loading ? t('common.loading') : t('common.signup')}

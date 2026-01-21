@@ -144,7 +144,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
         </div>
         
         {/* Navigation */}
-        <nav className="mt-4 flex gap-4">
+        <nav className="mt-4 flex gap-4 flex-wrap">
           <Link
             href={`/${locale}/admin/dashboard`}
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
@@ -156,6 +156,12 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors"
           >
             {t('admin.seats')}
+          </Link>
+          <Link
+            href={`/${locale}/admin/students`}
+            className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors"
+          >
+            {t('admin.studentManagement')}
           </Link>
           <Link
             href={`/${locale}/admin/branding`}

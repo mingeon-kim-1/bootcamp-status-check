@@ -87,6 +87,8 @@ export default function AdminSeatsPage({ params: { locale } }: { params: { local
           gridRow: row,
           gridCol: col,
         }])
+        // Auto-increment for next sequential assignment
+        setNextSeatNumber(nextSeatNumber + 1)
       } else {
         const input = prompt(`Enter seat number for position (Row ${row + 1}, Col ${col + 1}):`, nextSeatNumber.toString())
         if (input !== null) {
@@ -99,6 +101,8 @@ export default function AdminSeatsPage({ params: { locale } }: { params: { local
               gridCol: col,
             })
             setSeats(newSeats)
+            // Update next seat number to be after the manually entered number
+            setNextSeatNumber(seatNum + 1)
           }
         }
       }

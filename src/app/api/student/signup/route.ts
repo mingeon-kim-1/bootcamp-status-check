@@ -30,6 +30,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if there's a pre-registered student for this seat
+    const preRegistered = await prisma.preRegisteredStudent.findUnique({
+      where: { seatNumber },
+    })
+
     // Hash password and create student
     const passwordHash = await bcrypt.hash(password, 10)
 
@@ -38,9 +43,17 @@ export async function POST(request: NextRequest) {
         email,
         seatNumber,
         passwordHash,
+        name: preRegistered?.name || null,
         isLocked: true,
       },
     })
+
+    // Delete the pre-registration record if it existed
+    if (preRegistered) {
+      await prisma.preRegisteredStudent.delete({
+        where: { seatNumber },
+      })
+    }
 
     return NextResponse.json({
       message: 'Student registered successfully',
@@ -48,6 +61,7 @@ export async function POST(request: NextRequest) {
         id: student.id,
         email: student.email,
         seatNumber: student.seatNumber,
+        name: student.name,
       },
     })
   } catch (error) {

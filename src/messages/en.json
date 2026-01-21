@@ -91,7 +91,8 @@
     "signupSuccess": "Sign up successful. Please log in.",
     "passwordMismatch": "Passwords do not match.",
     "invalidEmail": "Please enter a valid email address.",
-    "invalidSeatNumber": "Please enter a valid seat number."
+    "invalidSeatNumber": "Please enter a valid seat number.",
+    "welcomePreregistered": "Welcome!"
   },
   "display": {
     "title": "Real-time Status Display",

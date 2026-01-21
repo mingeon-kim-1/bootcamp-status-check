@@ -91,7 +91,8 @@
     "signupSuccess": "注册成功，请登录。",
     "passwordMismatch": "密码不匹配。",
     "invalidEmail": "请输入有效的电子邮件地址。",
-    "invalidSeatNumber": "请输入有效的座位号。"
+    "invalidSeatNumber": "请输入有效的座位号。",
+    "welcomePreregistered": "欢迎！"
   },
   "display": {
     "title": "实时状态显示",

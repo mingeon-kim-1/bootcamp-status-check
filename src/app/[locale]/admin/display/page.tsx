@@ -8,6 +8,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 interface Student {
   id: string
+  name: string | null
   seatNumber: number
   status: string
   lastActive: string | null
@@ -179,13 +180,24 @@ export default function DisplayPage() {
         cells.push(
           <div
             key={`${displayRow}-${col}`}
-            className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex items-center justify-center font-bold transition-all ${
+            className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 flex flex-col items-center justify-center transition-all ${
               seatNumber 
                 ? getStatusColor(status) 
                 : 'border-slate-700 bg-slate-800/30 text-slate-600'
-            } ${isFullscreen ? 'w-20 h-20 text-2xl' : 'text-lg'}`}
+            } ${isFullscreen ? 'w-24 h-24' : ''}`}
           >
-            {seatNumber || ''}
+            {seatNumber && (
+              <>
+                <span className={`font-bold ${isFullscreen ? 'text-xl' : 'text-sm'}`}>
+                  {seatNumber}
+                </span>
+                {student?.name && (
+                  <span className={`truncate max-w-full px-1 ${isFullscreen ? 'text-xs' : 'text-[10px]'} opacity-80`}>
+                    {student.name}
+                  </span>
+                )}
+              </>
+            )}
           </div>
         )
 

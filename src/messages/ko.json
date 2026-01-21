@@ -91,7 +91,8 @@
     "signupSuccess": "회원가입이 완료되었습니다. 로그인해주세요.",
     "passwordMismatch": "비밀번호가 일치하지 않습니다.",
     "invalidEmail": "유효한 이메일 주소를 입력해주세요.",
-    "invalidSeatNumber": "유효한 좌석 번호를 입력해주세요."
+    "invalidSeatNumber": "유효한 좌석 번호를 입력해주세요.",
+    "welcomePreregistered": "환영합니다!"
   },
   "display": {
     "title": "실시간 상태 보기",
