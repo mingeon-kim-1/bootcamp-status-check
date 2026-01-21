@@ -77,3 +77,11 @@ model AttendanceCode {
   afternoonCode String?  // 4-digit code for afternoon (valid until 9 PM KST)
   updatedAt     DateTime @updatedAt
 }
+
+// Announcements for students
+model Announcement {
+  id        String   @id @default("default")
+  content   String?  // Announcement text
+  isActive  Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}

@@ -28,6 +28,11 @@ interface AttendanceCodes {
   afternoonCode: string | null
 }
 
+interface Announcement {
+  content: string | null
+  isActive: boolean
+}
+
 export default function AdminDashboardPage({ params: { locale } }: { params: { locale: string } }) {
   const t = useTranslations()
   const { data: session, status } = useSession()
@@ -35,9 +40,11 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const [students, setStudents] = useState<Student[]>([])
   const [config, setConfig] = useState<Config | null>(null)
   const [attendanceCodes, setAttendanceCodes] = useState<AttendanceCodes>({ morningCode: null, afternoonCode: null })
+  const [announcement, setAnnouncement] = useState<Announcement>({ content: null, isActive: false })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [savingCodes, setSavingCodes] = useState(false)
+  const [savingAnnouncement, setSavingAnnouncement] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated' || (session?.user?.role !== 'admin')) {
@@ -53,10 +60,11 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
   const fetchData = async () => {
     try {
-      const [studentsRes, configRes, codesRes] = await Promise.all([
+      const [studentsRes, configRes, codesRes, announcementRes] = await Promise.all([
         fetch('/api/admin/students'),
         fetch('/api/admin/config'),
         fetch('/api/admin/attendance'),
+        fetch('/api/admin/announcement'),
       ])
       
       setStudents(await studentsRes.json())
@@ -66,6 +74,13 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
         setAttendanceCodes({
           morningCode: codes.morningCode || '',
           afternoonCode: codes.afternoonCode || '',
+        })
+      }
+      if (announcementRes.ok) {
+        const ann = await announcementRes.json()
+        setAnnouncement({
+          content: ann.content || '',
+          isActive: ann.isActive ?? false,
         })
       }
     } catch (error) {
@@ -87,6 +102,21 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
       console.error('Error saving attendance codes:', error)
     } finally {
       setSavingCodes(false)
+    }
+  }
+
+  const saveAnnouncement = async () => {
+    setSavingAnnouncement(true)
+    try {
+      await fetch('/api/admin/announcement', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(announcement),
+      })
+    } catch (error) {
+      console.error('Error saving announcement:', error)
+    } finally {
+      setSavingAnnouncement(false)
     }
   }
 
@@ -336,6 +366,56 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white rounded-lg transition-colors"
           >
             {savingCodes ? t('common.loading') : '코드 저장'}
+          </button>
+        </section>
+
+        {/* Announcement */}
+        <section className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">📢 공지사항</h2>
+          <p className="text-gray-500 dark:text-slate-400 text-sm mb-6">
+            학생들에게 표시할 공지사항을 설정하세요. 출석 코드 입력 후 표시됩니다.
+          </p>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                공지 내용
+              </label>
+              <textarea
+                value={announcement.content || ''}
+                onChange={(e) => setAnnouncement(prev => ({ ...prev, content: e.target.value }))}
+                placeholder="공지사항을 입력하세요..."
+                rows={4}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              />
+            </div>
+
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={announcement.isActive}
+                    onChange={(e) => setAnnouncement(prev => ({ ...prev, isActive: e.target.checked }))}
+                    className="sr-only"
+                  />
+                  <div className={`w-12 h-6 rounded-full transition-colors ${announcement.isActive ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-slate-600'}`}>
+                    <div className={`w-5 h-5 bg-white rounded-full shadow transform transition-transform absolute top-0.5 ${announcement.isActive ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                  </div>
+                </div>
+                <span className="text-gray-700 dark:text-slate-300 font-medium">
+                  {announcement.isActive ? '공지사항 표시 중' : '공지사항 숨김'}
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <button
+            onClick={saveAnnouncement}
+            disabled={savingAnnouncement}
+            className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white rounded-lg transition-colors"
+          >
+            {savingAnnouncement ? t('common.loading') : '공지사항 저장'}
           </button>
         </section>
 

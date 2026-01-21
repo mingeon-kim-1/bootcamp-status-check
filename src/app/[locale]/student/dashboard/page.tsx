@@ -22,12 +22,18 @@ interface AttendanceStatus {
   isSessionValid: boolean
 }
 
+interface Announcement {
+  content: string | null
+  isActive: boolean
+}
+
 export default function StudentDashboardPage({ params: { locale } }: { params: { locale: string } }) {
   const t = useTranslations()
   const { data: session, status: sessionStatus } = useSession()
   const router = useRouter()
   const [studentData, setStudentData] = useState<StudentStatus | null>(null)
   const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus | null>(null)
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [attendanceCode, setAttendanceCode] = useState('')
@@ -48,9 +54,10 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
 
   const fetchData = async () => {
     try {
-      const [statusRes, attendanceRes] = await Promise.all([
+      const [statusRes, attendanceRes, announcementRes] = await Promise.all([
         fetch('/api/student/status'),
         fetch('/api/student/attendance'),
+        fetch('/api/admin/announcement'),
       ])
       
       if (statusRes.ok) {
@@ -58,6 +65,9 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
       }
       if (attendanceRes.ok) {
         setAttendanceStatus(await attendanceRes.json())
+      }
+      if (announcementRes.ok) {
+        setAnnouncement(await announcementRes.json())
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -209,6 +219,21 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
                     ✓ {currentSession === 'morning' ? '오전' : '오후'} 출석 완료
                   </span>
                 </div>
+
+                {/* Announcement */}
+                {announcement?.isActive && announcement?.content && (
+                  <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">📢</span>
+                      <div>
+                        <h3 className="font-semibold text-blue-800 dark:text-blue-400 mb-1">공지사항</h3>
+                        <p className="text-blue-700 dark:text-blue-300 text-sm whitespace-pre-wrap">
+                          {announcement.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Current Status */}
                 <div className="text-center mb-6">
