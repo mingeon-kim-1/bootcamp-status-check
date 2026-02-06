@@ -21,6 +21,7 @@ export async function GET() {
           useCustomLayout: false,
           corridorAfterRows: '[]',
           corridorAfterCols: '[]',
+          breakMode: false,
         },
       })
       return NextResponse.json({
@@ -73,6 +74,7 @@ export async function PUT(request: NextRequest) {
         useCustomLayout: data.useCustomLayout,
         corridorAfterRows,
         corridorAfterCols,
+        breakMode: data.breakMode ?? false,
       },
       create: {
         id: 'default',
@@ -83,6 +85,7 @@ export async function PUT(request: NextRequest) {
         useCustomLayout: data.useCustomLayout || false,
         corridorAfterRows,
         corridorAfterCols,
+        breakMode: data.breakMode ?? false,
       },
     })
 

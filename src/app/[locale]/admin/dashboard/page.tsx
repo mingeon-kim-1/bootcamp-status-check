@@ -20,6 +20,7 @@ interface Config {
   seatDirection: string
   displayTitle: string
   useCustomLayout: boolean
+  breakMode?: boolean
 }
 
 interface AttendanceCodes {
@@ -44,6 +45,8 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const [saving, setSaving] = useState(false)
   const [savingCodes, setSavingCodes] = useState(false)
   const [savingAnnouncement, setSavingAnnouncement] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated' || (session?.user?.role !== 'admin')) {
@@ -91,14 +94,22 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
   const saveAttendanceCodes = async () => {
     setSavingCodes(true)
+    setSaveError(null)
     try {
-      await fetch('/api/admin/attendance', {
+      const res = await fetch('/api/admin/attendance', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(attendanceCodes),
       })
+      if (res.ok) {
+        setSaveSuccess('codes')
+        setTimeout(() => setSaveSuccess(null), 2500)
+      } else {
+        setSaveError(t('common.errorTryAgain'))
+      }
     } catch (error) {
       console.error('Error saving attendance codes:', error)
+      setSaveError(t('common.errorTryAgain'))
     } finally {
       setSavingCodes(false)
     }
@@ -107,14 +118,22 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const saveAnnouncement = async (announcementData?: Announcement) => {
     const dataToSave = announcementData || announcement
     setSavingAnnouncement(true)
+    setSaveError(null)
     try {
-      await fetch('/api/admin/announcement', {
+      const res = await fetch('/api/admin/announcement', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSave),
       })
+      if (res.ok) {
+        setSaveSuccess('announcement')
+        setTimeout(() => setSaveSuccess(null), 2500)
+      } else {
+        setSaveError(t('common.errorTryAgain'))
+      }
     } catch (error) {
       console.error('Error saving announcement:', error)
+      setSaveError(t('common.errorTryAgain'))
     } finally {
       setSavingAnnouncement(false)
     }
@@ -135,14 +154,22 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const saveConfig = async () => {
     if (!config) return
     setSaving(true)
+    setSaveError(null)
     try {
-      await fetch('/api/admin/config', {
+      const res = await fetch('/api/admin/config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
       })
+      if (res.ok) {
+        setSaveSuccess('config')
+        setTimeout(() => setSaveSuccess(null), 2500)
+      } else {
+        setSaveError(t('common.errorTryAgain'))
+      }
     } catch (error) {
       console.error('Error saving config:', error)
+      setSaveError(t('common.errorTryAgain'))
     } finally {
       setSaving(false)
     }
@@ -198,7 +225,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-6 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('admin.dashboard')}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('admin.config')}</h1>
           <div className="flex items-center gap-4">
             <SettingsModal />
             <button
@@ -211,7 +238,19 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
         </div>
         
         {/* Navigation */}
-        <nav className="mt-4 flex gap-4 flex-wrap">
+        <nav className="mt-4 flex gap-4 flex-wrap items-center">
+          <Link
+            href={`/${locale}/admin/display`}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-colors"
+          >
+            {t('admin.display')}
+          </Link>
+          <Link
+            href={`/${locale}/view`}
+            className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors text-sm"
+          >
+            {t('display.viewOnly')}
+          </Link>
           <Link
             href={`/${locale}/admin/dashboard`}
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
@@ -230,13 +269,12 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
           >
             {t('admin.studentManagement')}
           </Link>
-          <Link
-            href={`/${locale}/admin/display`}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
-          >
-            {t('admin.display')}
-          </Link>
         </nav>
+        {(saveSuccess || saveError) && (
+          <div className={`mt-3 px-4 py-2 rounded-lg text-sm ${saveError ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'}`}>
+            {saveError ? saveError : t('common.saved')}
+          </div>
+        )}
       </header>
 
       <main className="p-6 space-y-8">
@@ -303,7 +341,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
               </div>
             </div>
 
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center gap-6">
               <label className="flex items-center gap-2 text-gray-700 dark:text-slate-300">
                 <input
                   type="checkbox"
@@ -313,7 +351,42 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
                 />
                 {t('admin.useCustomLayout')}
               </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={config.breakMode ?? false}
+                    onChange={async () => {
+                      if (!config) return
+                      const newConfig = { ...config, breakMode: !(config.breakMode ?? false) }
+                      setConfig(newConfig)
+                      setSaving(true)
+                      try {
+                        await fetch('/api/admin/config', {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(newConfig),
+                        })
+                      } catch (e) {
+                        console.error(e)
+                      } finally {
+                        setSaving(false)
+                      }
+                    }}
+                    className="sr-only"
+                    disabled={saving}
+                  />
+                  <div className={`w-12 h-6 rounded-full transition-colors ${config.breakMode ? 'bg-amber-500' : 'bg-gray-300 dark:bg-slate-600'} ${saving ? 'opacity-50' : ''}`}>
+                    <div className={`w-5 h-5 bg-white rounded-full shadow transform transition-transform absolute top-0.5 ${config.breakMode ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                  </div>
+                </div>
+                <span className="text-gray-700 dark:text-slate-300 font-medium">
+                  {t('admin.breakModeLabel')}
+                </span>
+              </label>
+            </div>
 
+            <div className="mt-4 flex items-center gap-4">
               <button
                 onClick={saveConfig}
                 disabled={saving}
@@ -327,15 +400,15 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
         {/* Attendance Codes */}
         <section className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">📋 출석 코드</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('admin.attendanceCodes')}</h2>
           <p className="text-gray-500 dark:text-slate-400 text-sm mb-6">
-            오전 코드: 오후 1시까지 유효 | 오후 코드: 오후 9시까지 유효 (KST)
+            {t('admin.attendanceHint')}
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                오전 코드 (4자리 숫자)
+                {t('admin.attendanceMorning')}
               </label>
               <input
                 type="text"
@@ -348,7 +421,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                오후 코드 (4자리 숫자)
+                {t('admin.attendanceAfternoon')}
               </label>
               <input
                 type="text"
@@ -366,26 +439,26 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             disabled={savingCodes}
             className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white rounded-lg transition-colors"
           >
-            {savingCodes ? t('common.loading') : '코드 저장'}
+            {savingCodes ? t('common.loading') : t('admin.saveCodes')}
           </button>
         </section>
 
         {/* Announcement */}
         <section className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">📢 공지사항</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('admin.announcement')}</h2>
           <p className="text-gray-500 dark:text-slate-400 text-sm mb-6">
-            학생들에게 표시할 공지사항을 설정하세요. 출석 코드 입력 후 표시됩니다.
+            {t('admin.announcementHint')}
           </p>
           
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                공지 내용
+                {t('admin.announcementContent')}
               </label>
               <textarea
                 value={announcement.content || ''}
                 onChange={(e) => setAnnouncement(prev => ({ ...prev, content: e.target.value }))}
-                placeholder="공지사항을 입력하세요..."
+                placeholder={t('admin.announcementPlaceholder')}
                 rows={4}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
               />
@@ -406,7 +479,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
                   </div>
                 </div>
                 <span className="text-gray-700 dark:text-slate-300 font-medium">
-                  {savingAnnouncement ? t('common.loading') : (announcement.isActive ? '공지사항 표시 중' : '공지사항 숨김')}
+                  {savingAnnouncement ? t('common.loading') : (announcement.isActive ? t('admin.announcementVisible') : t('admin.announcementHidden'))}
                 </span>
               </label>
             </div>
@@ -417,7 +490,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             disabled={savingAnnouncement}
             className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white rounded-lg transition-colors"
           >
-            {savingAnnouncement ? t('common.loading') : '공지사항 저장'}
+            {savingAnnouncement ? t('common.loading') : t('admin.saveAnnouncement')}
           </button>
         </section>
 

@@ -29,7 +29,11 @@
     "exitFullscreen": "전체 화면 종료",
     "back": "돌아가기",
     "frontOfRoom": "앞쪽",
-    "backOfRoom": "뒤쪽"
+    "backOfRoom": "뒤쪽",
+    "lastActive": "마지막 활동",
+    "waiting": "대기",
+    "saved": "저장됨",
+    "errorTryAgain": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "landing": {
     "title": "부트캠프 상태 확인",
@@ -67,7 +71,20 @@
       "top-left-horizontal": "왼쪽 상단에서 오른쪽 하단으로 (가로)"
     },
     "confirmResetStudent": "이 학생의 계정을 초기화하시겠습니까?",
-    "confirmResetAll": "모든 학생 계정을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+    "confirmResetAll": "모든 학생 계정을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "breakModeLabel": "휴식 모드 (디스플레이에 일시 정지 메시지 표시)",
+    "attendanceCodes": "출석 코드",
+    "attendanceMorning": "오전 코드 (4자리)",
+    "attendanceAfternoon": "오후 코드 (4자리)",
+    "attendanceHint": "오전: 오후 1시까지 유효, 오후: 오후 9시까지 유효 (KST).",
+    "saveCodes": "코드 저장",
+    "announcement": "공지사항",
+    "announcementContent": "내용",
+    "announcementPlaceholder": "공지사항을 입력하세요...",
+    "announcementVisible": "공지사항 표시 중",
+    "announcementHidden": "공지사항 숨김",
+    "saveAnnouncement": "공지사항 저장",
+    "announcementHint": "학생들에게 표시할 공지사항을 설정하세요. 출석 코드 입력 후 표시됩니다."
   },
   "student": {
     "dashboard": "학생 대시보드",
@@ -76,7 +93,24 @@
     "requestHelp": "도움 요청",
     "markReady": "준비 완료",
     "helpRequested": "도움을 요청했습니다. 조금만 기다려주세요.",
-    "youAreReady": "준비 완료 상태입니다."
+    "youAreReady": "준비 완료 상태입니다.",
+    "selectSeat": "좌석을 선택하세요",
+    "enterCode": "4자리 코드 입력",
+    "codeHint": "강사 또는 화면에서 코드를 확인하세요.",
+    "codeInvalid": "코드가 올바르지 않거나 만료되었습니다.",
+    "pleaseSelectSeat": "좌석을 선택해 주세요.",
+    "enterCodeLength": "4자리 출석 코드를 입력해 주세요.",
+    "attendanceComplete": "출석 완료",
+    "announcementTitle": "공지사항",
+    "youAreInQueue": "대기열에 등록되었습니다. 강사가 찾아갑니다."
+  },
+  "settings": {
+    "title": "설정",
+    "theme": "테마",
+    "language": "언어",
+    "light": "라이트",
+    "dark": "다크",
+    "system": "시스템"
   },
   "auth": {
     "loginTitle": "로그인",
@@ -97,7 +131,14 @@
   "display": {
     "title": "실시간 상태 보기",
     "noStudents": "등록된 학생이 없습니다.",
+    "studentsEmptyHint": "학생이 좌석 번호와 출석 코드로 로그인하면 목록에 표시됩니다.",
     "legend": "범례",
-    "row": "행"
+    "row": "행",
+    "breakMessage": "휴식 시간 — 잠시 후에 다시 시작합니다.",
+    "breakMode": "휴식 모드",
+    "breakModeOn": "휴식 모드: 켜짐",
+    "helpQueue": "도움 대기열",
+    "invalidLink": "잘못되었거나 만료된 링크입니다.",
+    "viewOnly": "보기 전용"
   }
 }

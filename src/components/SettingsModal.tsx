@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useTheme } from './ThemeProvider'
 import LanguageSwitcher from './LanguageSwitcher'
 
 export default function SettingsModal() {
+  const t = useTranslations()
   const { theme, setTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -18,7 +20,7 @@ export default function SettingsModal() {
     return (
       <button
         className="p-2 rounded-lg bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors"
-        title="Settings"
+        title={t('settings.title')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +47,7 @@ export default function SettingsModal() {
       <button
         onClick={() => setIsOpen(true)}
         className="p-2 rounded-lg bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors"
-        title="Settings"
+        title={t('settings.title')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +79,7 @@ export default function SettingsModal() {
           <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Settings
+                {t('settings.title')}
               </h2>
               <button
                 onClick={() => setIsOpen(false)}
@@ -104,7 +106,7 @@ export default function SettingsModal() {
             {/* Theme Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Theme
+                {t('settings.theme')}
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
@@ -140,7 +142,7 @@ export default function SettingsModal() {
                   <span className={`text-sm font-medium ${
                     theme === 'light' ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-400'
                   }`}>
-                    Light
+                    {t('settings.light')}
                   </span>
                 </button>
 
@@ -169,7 +171,7 @@ export default function SettingsModal() {
                   <span className={`text-sm font-medium ${
                     theme === 'dark' ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-400'
                   }`}>
-                    Dark
+                    {t('settings.dark')}
                   </span>
                 </button>
 
@@ -200,7 +202,7 @@ export default function SettingsModal() {
                   <span className={`text-sm font-medium ${
                     theme === 'system' ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-400'
                   }`}>
-                    System
+                    {t('settings.system')}
                   </span>
                 </button>
               </div>
@@ -209,7 +211,7 @@ export default function SettingsModal() {
             {/* Language Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Language
+                {t('settings.language')}
               </label>
               <LanguageSwitcher />
             </div>

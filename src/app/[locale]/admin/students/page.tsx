@@ -12,6 +12,7 @@ interface Student {
   seatNumber: number
   status: string
   lastActive: string | null
+  needHelpSince: string | null
 }
 
 export default function AdminStudentsPage({ params: { locale } }: { params: { locale: string } }) {
@@ -100,10 +101,11 @@ export default function AdminStudentsPage({ params: { locale } }: { params: { lo
           </div>
         </div>
         <nav className="mt-4 flex gap-4 flex-wrap">
+          <Link href={`/${locale}/admin/display`} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-colors">{t('admin.display')}</Link>
+          <Link href={`/${locale}/view`} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors text-sm">{t('display.viewOnly')}</Link>
           <Link href={`/${locale}/admin/dashboard`} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors">{t('admin.config')}</Link>
           <Link href={`/${locale}/admin/seats`} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg transition-colors">{t('admin.seats')}</Link>
           <Link href={`/${locale}/admin/students`} className="px-4 py-2 bg-indigo-600 text-white rounded-lg">{t('admin.studentManagement')}</Link>
-          <Link href={`/${locale}/admin/display`} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">{t('admin.display')}</Link>
         </nav>
       </header>
 
@@ -113,7 +115,7 @@ export default function AdminStudentsPage({ params: { locale } }: { params: { lo
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('admin.studentManagement')}</h2>
-              <p className="text-gray-500 dark:text-slate-400 mt-1">현재 로그인한 학생 목록</p>
+              <p className="text-gray-500 dark:text-slate-400 mt-1">{t('display.studentsEmptyHint')}</p>
             </div>
             {students.length > 0 && (
               <button
@@ -126,7 +128,10 @@ export default function AdminStudentsPage({ params: { locale } }: { params: { lo
           </div>
           
           {students.length === 0 ? (
-            <p className="text-gray-500 dark:text-slate-400">로그인한 학생이 없습니다.</p>
+            <div className="text-gray-500 dark:text-slate-400 space-y-1">
+              <p>{t('display.noStudents')}</p>
+              <p className="text-sm">{t('display.studentsEmptyHint')}</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -134,12 +139,24 @@ export default function AdminStudentsPage({ params: { locale } }: { params: { lo
                   <tr className="border-b border-gray-200 dark:border-slate-700">
                     <th className="text-left py-3 px-4 text-gray-600 dark:text-slate-400">{t('common.seatNumber')}</th>
                     <th className="text-left py-3 px-4 text-gray-600 dark:text-slate-400">{t('common.status')}</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-slate-400">마지막 활동</th>
+                    <th className="text-left py-3 px-4 text-gray-600 dark:text-slate-400">{t('common.waiting')}</th>
+                    <th className="text-left py-3 px-4 text-gray-600 dark:text-slate-400">{t('common.lastActive')}</th>
                     <th className="text-right py-3 px-4 text-gray-600 dark:text-slate-400">{t('common.edit')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {students.map((student) => (
+                  {[...students]
+                    .sort((a, b) => {
+                      if (a.status === 'need-help' && b.status !== 'need-help') return -1
+                      if (a.status !== 'need-help' && b.status === 'need-help') return 1
+                      if (a.status === 'need-help' && b.status === 'need-help') {
+                        const aTime = a.needHelpSince ? new Date(a.needHelpSince).getTime() : 0
+                        const bTime = b.needHelpSince ? new Date(b.needHelpSince).getTime() : 0
+                        return aTime - bTime
+                      }
+                      return a.seatNumber - b.seatNumber
+                    })
+                    .map((student) => (
                     <tr key={student.id} className="border-b border-gray-100 dark:border-slate-700/50">
                       <td className="py-3 px-4 font-bold text-gray-900 dark:text-white text-lg">{student.seatNumber}번</td>
                       <td className="py-3 px-4">
@@ -154,7 +171,12 @@ export default function AdminStudentsPage({ params: { locale } }: { params: { lo
                         </span>
                       </td>
                       <td className="py-3 px-4 text-gray-500 dark:text-slate-400 text-sm">
-                        {student.lastActive ? new Date(student.lastActive).toLocaleString('ko-KR') : '-'}
+                        {student.status === 'need-help' && student.needHelpSince
+                          ? `${Math.max(0, Math.floor((Date.now() - new Date(student.needHelpSince).getTime()) / 60000))}m`
+                          : '-'}
+                      </td>
+                      <td className="py-3 px-4 text-gray-500 dark:text-slate-400 text-sm">
+                        {student.lastActive ? new Date(student.lastActive).toLocaleString() : '-'}
                       </td>
                       <td className="py-3 px-4 text-right space-x-2">
                         {student.status === 'need-help' && (

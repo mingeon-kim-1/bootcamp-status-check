@@ -29,7 +29,11 @@
     "exitFullscreen": "退出全屏",
     "back": "返回",
     "frontOfRoom": "前方",
-    "backOfRoom": "后方"
+    "backOfRoom": "后方",
+    "lastActive": "最后活动",
+    "waiting": "等待",
+    "saved": "已保存",
+    "errorTryAgain": "出错了，请重试。"
   },
   "landing": {
     "title": "训练营状态检查",
@@ -67,7 +71,20 @@
       "top-left-horizontal": "从左上到右下（水平）"
     },
     "confirmResetStudent": "确定要重置此学生的账户吗？",
-    "confirmResetAll": "确定要重置所有学生账户吗？此操作无法撤销。"
+    "confirmResetAll": "确定要重置所有学生账户吗？此操作无法撤销。",
+    "breakModeLabel": "休息模式（显示暂停信息）",
+    "attendanceCodes": "考勤码",
+    "attendanceMorning": "上午码（4位）",
+    "attendanceAfternoon": "下午码（4位）",
+    "attendanceHint": "上午有效至下午1点，下午有效至晚上9点（KST）。",
+    "saveCodes": "保存代码",
+    "announcement": "公告",
+    "announcementContent": "内容",
+    "announcementPlaceholder": "输入公告...",
+    "announcementVisible": "公告显示中",
+    "announcementHidden": "公告已隐藏",
+    "saveAnnouncement": "保存公告",
+    "announcementHint": "设置向学生显示的公告。输入考勤码后显示。"
   },
   "student": {
     "dashboard": "学生仪表板",
@@ -76,7 +93,24 @@
     "requestHelp": "请求帮助",
     "markReady": "标记为就绪",
     "helpRequested": "已请求帮助，请稍候。",
-    "youAreReady": "您已准备就绪。"
+    "youAreReady": "您已准备就绪。",
+    "selectSeat": "选择座位",
+    "enterCode": "输入4位代码",
+    "codeHint": "向讲师或屏幕获取代码。",
+    "codeInvalid": "代码无效或已过期。",
+    "pleaseSelectSeat": "请选择座位。",
+    "enterCodeLength": "请输入4位考勤码。",
+    "attendanceComplete": "考勤完成",
+    "announcementTitle": "公告",
+    "youAreInQueue": "您已在队列中，讲师会到您的座位。"
+  },
+  "settings": {
+    "title": "设置",
+    "theme": "主题",
+    "language": "语言",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "系统"
   },
   "auth": {
     "loginTitle": "登录",
@@ -97,7 +131,14 @@
   "display": {
     "title": "实时状态显示",
     "noStudents": "没有注册的学生。",
+    "studentsEmptyHint": "学生使用座位号和考勤码登录后将显示在列表中。",
     "legend": "图例",
-    "row": "行"
+    "row": "行",
+    "breakMessage": "休息时间 — 稍后继续。",
+    "breakMode": "休息模式",
+    "breakModeOn": "休息模式：开启",
+    "helpQueue": "帮助队列",
+    "invalidLink": "链接无效或已过期。",
+    "viewOnly": "仅查看"
   }
 }

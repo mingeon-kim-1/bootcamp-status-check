@@ -11,6 +11,7 @@ export async function GET() {
         seatNumber: true,
         status: true,
         lastActive: true,
+        needHelpSince: true,
         createdAt: true,
       },
       orderBy: { seatNumber: 'asc' },
@@ -81,12 +82,13 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    const newStatus = status || 'online'
     const student = await prisma.student.update({
       where: { id: studentId },
-      data: {
-        status: status || 'online',
-        lastActive: new Date(),
-      },
+      data:
+        newStatus === 'need-help'
+          ? { status: newStatus, lastActive: new Date(), needHelpSince: new Date() }
+          : { status: newStatus, lastActive: new Date(), needHelpSince: null },
     })
 
     return NextResponse.json(student)

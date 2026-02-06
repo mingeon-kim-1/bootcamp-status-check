@@ -52,11 +52,11 @@ export default function StudentLoginPage({ params: { locale } }: { params: { loc
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!seatNumber) {
-      setError('좌석을 선택해주세요')
+      setError(t('student.pleaseSelectSeat'))
       return
     }
     if (attendanceCode.length !== 4) {
-      setError('4자리 출석 코드를 입력해주세요')
+      setError(t('student.enterCodeLength'))
       return
     }
 
@@ -70,7 +70,7 @@ export default function StudentLoginPage({ params: { locale } }: { params: { loc
     })
 
     if (result?.error) {
-      setError('출석 코드가 올바르지 않습니다')
+      setError(t('student.codeInvalid'))
       setLoading(false)
     } else {
       router.push(`/${locale}/student/dashboard`)
@@ -136,7 +136,7 @@ export default function StudentLoginPage({ params: { locale } }: { params: { loc
                   </div>
                   {seatNumber && (
                     <p className="mt-2 text-center text-emerald-600 dark:text-emerald-400 font-medium">
-                      선택된 좌석: {seatNumber}번
+                      {t('student.yourSeat')}: {seatNumber}
                     </p>
                   )}
                 </div>
@@ -144,7 +144,7 @@ export default function StudentLoginPage({ params: { locale } }: { params: { loc
                 {/* Attendance Code */}
                 <div>
                   <label htmlFor="attendanceCode" className="block text-sm font-medium text-gray-700 dark:text-emerald-200 mb-2">
-                    출석 코드 (4자리)
+                    {t('student.enterCode')}
                   </label>
                   <input
                     type="text"
@@ -156,6 +156,7 @@ export default function StudentLoginPage({ params: { locale } }: { params: { loc
                     className="w-full px-4 py-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl text-gray-900 dark:text-white text-center text-2xl font-bold tracking-widest placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="0000"
                   />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{t('student.codeHint')}</p>
                 </div>
 
                 {error && (

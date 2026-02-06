@@ -27,7 +27,8 @@ model BootcampConfig {
   useCustomLayout Boolean @default(false)
   corridorAfterRows String @default("[]") // JSON array of row indices that have corridors after them
   corridorAfterCols String @default("[]") // JSON array of column indices that have corridors after them
-  updatedAt       DateTime @updatedAt
+  breakMode         Boolean @default(false)
+  updatedAt        DateTime @updatedAt
 }
 
 model SeatPosition {
@@ -39,13 +40,14 @@ model SeatPosition {
 }
 
 model Student {
-  id                  String   @id @default(uuid())
-  seatNumber          Int      @unique
-  status              String   @default("offline") // offline, online, need-help
+  id                  String    @id @default(uuid())
+  seatNumber          Int       @unique
+  status              String    @default("offline") // offline, online, need-help
   lastActive          DateTime?
+  needHelpSince       DateTime? // When status became need-help (for queue order)
   attendanceVerified  DateTime? // Last time attendance was verified
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 // Daily attendance codes set by admin

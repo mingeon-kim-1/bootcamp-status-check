@@ -18,6 +18,7 @@ export async function GET() {
         seatNumber: true,
         status: true,
         lastActive: true,
+        needHelpSince: true,
       },
     })
 
@@ -54,16 +55,17 @@ export async function PUT(request: NextRequest) {
 
     const student = await prisma.student.update({
       where: { id: session.user.id },
-      data: {
-        status,
-        lastActive: new Date(),
-      },
+      data:
+        status === 'need-help'
+          ? { status, lastActive: new Date(), needHelpSince: new Date() }
+          : { status, lastActive: new Date(), needHelpSince: null },
     })
 
     return NextResponse.json({
       id: student.id,
       status: student.status,
       lastActive: student.lastActive,
+      needHelpSince: student.needHelpSince,
     })
   } catch (error) {
     console.error('Update status error:', error)

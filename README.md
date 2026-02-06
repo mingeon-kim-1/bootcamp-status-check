@@ -6,11 +6,11 @@ A real-time bootcamp status monitoring web application built with Next.js, featu
 
 - **Multi-language Support**: Korean (default), English, and Chinese
 - **Real-time Status Display**: Color-coded seat grid (Green=Ready, Red=Need Help, Grey=Absent)
-- **Admin Dashboard**: Configure seats, manage students, customize branding
-- **Student Portal**: Easy sign-up and status control
+- **Admin Dashboard**: Configure seats, manage students, set daily attendance codes
+- **Student Portal**: Login with seat number + attendance code; status control (Ready / Need Help)
 - **Fullscreen Mode**: Large display support for classroom monitoring
 - **Custom Seat Layout**: Manual seat number assignment with row/column corridors
-- **Organization Branding**: Upload logos and customize text for login/display screens
+- **Daily Attendance Codes**: Admin sets morning/afternoon 4-digit codes (KST); students use them to log in
 - **Light/Dark Mode**: Automatic system detection with manual override
 
 ## Tech Stack
@@ -21,6 +21,7 @@ A real-time bootcamp status monitoring web application built with Next.js, featu
 - **Internationalization**: next-intl
 - **Styling**: Tailwind CSS
 - **ORM**: Prisma
+- **Real-time**: Polling (status/display refresh every few seconds)
 
 ## Deploy to Vercel
 
@@ -101,18 +102,19 @@ A real-time bootcamp status monitoring web application built with Next.js, featu
 
 ### Admin Flow
 
-1. Log in at `/admin/login`
-2. Configure bootcamp settings (seats per row, total rows, seat direction)
-3. Optionally set up custom seat layout at `/admin/seats`
-4. Upload organization branding at `/admin/branding`
+1. Log in at `/admin/login` (default seed: username `admin`, password `wrtnedu`)
+2. Configure bootcamp settings (seats per row, total rows, seat direction) in the dashboard
+3. Set daily attendance codes (morning / afternoon, 4-digit, KST) for student login
+4. Optionally set up custom seat layout at `/admin/seats`
 5. View real-time status at `/admin/display` (supports fullscreen)
-6. Manage students and reset accounts as needed
+6. For a shareable display without login, set `DISPLAY_PUBLIC_TOKEN` in the environment and open `/{locale}/view?token=YOUR_SECRET` (e.g. in a projector browser)
+7. Manage students at `/admin/students` as needed
 
 ### Student Flow
 
-1. Sign up at `/student/signup` with email and seat number
-2. Log in at `/student/login`
-3. Status automatically set to "Ready" (green) on login
+1. Go to `/student/login`
+2. Select your seat number and enter the day’s 4-digit attendance code (from the instructor)
+3. On successful login you are created or updated; status is set to "Ready" (green)
 4. Click "Request Help" to change status to "Need Help" (red)
 5. Click "Mark as Ready" when help is received
 
@@ -140,13 +142,13 @@ Admin can change direction or use custom layout for irregular arrangements.
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/status` | Public endpoint for real-time status data |
+| `GET /api/status` | Public endpoint for status data (students, config, seat positions) |
 | `GET/PUT /api/admin/config` | Bootcamp configuration |
-| `GET/PUT /api/admin/branding` | Organization branding |
+| `GET/PUT /api/admin/attendance` | Daily attendance codes (morning/afternoon) |
+| `GET/PUT /api/admin/announcement` | Announcement for students |
 | `GET/POST/DELETE /api/admin/seats` | Custom seat positions |
 | `GET/PUT/DELETE /api/admin/students` | Student management |
-| `POST /api/student/signup` | Student registration |
-| `GET/PUT /api/student/status` | Student status control |
+| `GET/PUT /api/student/status` | Student status control (requires auth) |
 | `POST/DELETE /api/upload` | Image file upload |
 
 ## Scripts
@@ -159,6 +161,12 @@ npm run lint      # Run ESLint
 npm run db:seed   # Seed database with admin account
 npm run db:push   # Push schema to database
 ```
+
+## Notes
+
+- **Real-time updates**: The display and status views use polling (see `src/lib/socket.ts`). The `socket.io` packages in `package.json` are not used by the app.
+- **Seeded admin**: After `npm run db:seed`, log in at `/admin/login` with username `admin` and password `wrtnedu`.
+- **Public display**: Set `DISPLAY_PUBLIC_TOKEN` in your environment to enable the view-only URL `/{locale}/view?token=YOUR_SECRET` for projectors or shared screens without admin login.
 
 ## License
 

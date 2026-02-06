@@ -29,7 +29,11 @@
     "exitFullscreen": "Exit Fullscreen",
     "back": "Back",
     "frontOfRoom": "Front of Room",
-    "backOfRoom": "Back of Room"
+    "backOfRoom": "Back of Room",
+    "lastActive": "Last active",
+    "waiting": "Waiting",
+    "saved": "Saved",
+    "errorTryAgain": "Something went wrong. Try again."
   },
   "landing": {
     "title": "Bootcamp Status Check",
@@ -67,7 +71,20 @@
       "top-left-horizontal": "Top-left to bottom-right (Horizontal)"
     },
     "confirmResetStudent": "Are you sure you want to reset this student's account?",
-    "confirmResetAll": "Are you sure you want to reset all student accounts? This action cannot be undone."
+    "confirmResetAll": "Are you sure you want to reset all student accounts? This action cannot be undone.",
+    "breakModeLabel": "Break mode (display shows pause message)",
+    "attendanceCodes": "Attendance Codes",
+    "attendanceMorning": "Morning code (4 digits)",
+    "attendanceAfternoon": "Afternoon code (4 digits)",
+    "attendanceHint": "Morning valid until 1 PM, afternoon until 9 PM (KST).",
+    "saveCodes": "Save codes",
+    "announcement": "Announcement",
+    "announcementContent": "Content",
+    "announcementPlaceholder": "Enter announcement...",
+    "announcementVisible": "Announcement visible",
+    "announcementHidden": "Announcement hidden",
+    "saveAnnouncement": "Save announcement",
+    "announcementHint": "Set the announcement shown to students. Visible after they enter the code."
   },
   "student": {
     "dashboard": "Student Dashboard",
@@ -76,7 +93,24 @@
     "requestHelp": "Request Help",
     "markReady": "Mark as Ready",
     "helpRequested": "Help has been requested. Please wait.",
-    "youAreReady": "You are ready."
+    "youAreReady": "You are ready.",
+    "selectSeat": "Select your seat",
+    "enterCode": "Enter 4-digit code",
+    "codeHint": "Get the code from your instructor or the screen.",
+    "codeInvalid": "Code is invalid or expired.",
+    "pleaseSelectSeat": "Please select a seat.",
+    "enterCodeLength": "Enter a 4-digit code.",
+    "attendanceComplete": "Attendance complete",
+    "announcementTitle": "Announcement",
+    "youAreInQueue": "You're in the queue. The instructor will come to your seat."
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "auth": {
     "loginTitle": "Login",
@@ -97,7 +131,14 @@
   "display": {
     "title": "Real-time Status Display",
     "noStudents": "No students registered.",
+    "studentsEmptyHint": "Students will appear after they log in with seat number and attendance code.",
     "legend": "Legend",
-    "row": "Row"
+    "row": "Row",
+    "breakMessage": "Break — we'll resume shortly.",
+    "breakMode": "Break mode",
+    "breakModeOn": "Break mode: ON",
+    "helpQueue": "Help queue",
+    "invalidLink": "Invalid or expired link.",
+    "viewOnly": "View only"
   }
 }

@@ -148,7 +148,7 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
             {/* Attendance Verified Badge */}
             <div className="mb-6 p-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-lg text-center">
               <span className="text-emerald-700 dark:text-emerald-400 font-medium">
-                ✓ 출석 완료
+                ✓ {t('student.attendanceComplete')}
               </span>
             </div>
 
@@ -162,7 +162,7 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">📢</span>
                   <div>
-                    <h3 className="font-semibold text-blue-800 dark:text-blue-400 mb-1">공지사항</h3>
+                    <h3 className="font-semibold text-blue-800 dark:text-blue-400 mb-1">{t('student.announcementTitle')}</h3>
                     <p className="text-blue-700 dark:text-blue-300 text-sm whitespace-pre-wrap">
                       {announcement?.content || ''}
                     </p>
@@ -191,9 +191,10 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
             </div>
 
             {/* Status Message */}
-            <p className="text-center text-gray-600 dark:text-slate-300 mb-8">
-              {isNeedHelp ? t('student.helpRequested') : t('student.youAreReady')}
-            </p>
+            <div className="text-center text-gray-600 dark:text-slate-300 mb-8 space-y-1">
+              <p>{isNeedHelp ? t('student.helpRequested') : t('student.youAreReady')}</p>
+              {isNeedHelp && <p className="text-sm">{t('student.youAreInQueue')}</p>}
+            </div>
 
             {/* Action Buttons */}
             <div className="space-y-4">
