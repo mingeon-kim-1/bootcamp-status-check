@@ -84,7 +84,13 @@
     "announcementVisible": "公告显示中",
     "announcementHidden": "公告已隐藏",
     "saveAnnouncement": "保存公告",
-    "announcementHint": "设置向学生显示的公告。输入考勤码后显示。"
+    "announcementHint": "设置向学生显示的公告。支持 Markdown 格式。输入考勤码后显示。",
+    "announcementPreview": "预览",
+    "announcementEdit": "编辑",
+    "markdownBold": "粗体",
+    "markdownItalic": "斜体",
+    "markdownUnderline": "下划线",
+    "markdownStrikethrough": "删除线"
   },
   "student": {
     "dashboard": "学生仪表板",

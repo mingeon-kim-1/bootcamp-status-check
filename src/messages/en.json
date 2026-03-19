@@ -84,7 +84,13 @@
     "announcementVisible": "Announcement visible",
     "announcementHidden": "Announcement hidden",
     "saveAnnouncement": "Save announcement",
-    "announcementHint": "Set the announcement shown to students. Visible after they enter the code."
+    "announcementHint": "Set the announcement shown to students. Supports Markdown formatting. Visible after they enter the code.",
+    "announcementPreview": "Preview",
+    "announcementEdit": "Edit",
+    "markdownBold": "bold",
+    "markdownItalic": "italic",
+    "markdownUnderline": "underline",
+    "markdownStrikethrough": "strikethrough"
   },
   "student": {
     "dashboard": "Student Dashboard",

@@ -5,6 +5,8 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 import SettingsModal from '@/components/SettingsModal'
 
 interface Student {
@@ -45,6 +47,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const [saving, setSaving] = useState(false)
   const [savingCodes, setSavingCodes] = useState(false)
   const [savingAnnouncement, setSavingAnnouncement] = useState(false)
+  const [showAnnouncementPreview, setShowAnnouncementPreview] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -452,16 +455,47 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
           
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                {t('admin.announcementContent')}
-              </label>
-              <textarea
-                value={announcement.content || ''}
-                onChange={(e) => setAnnouncement(prev => ({ ...prev, content: e.target.value }))}
-                placeholder={t('admin.announcementPlaceholder')}
-                rows={4}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-              />
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                  {t('admin.announcementContent')}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowAnnouncementPreview(!showAnnouncementPreview)}
+                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors"
+                >
+                  {showAnnouncementPreview ? t('admin.announcementEdit') : t('admin.announcementPreview')}
+                </button>
+              </div>
+
+              {showAnnouncementPreview ? (
+                <div className="w-full min-h-[7rem] px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white">
+                  {announcement.content ? (
+                    <div className="prose-sm dark:prose-invert max-w-none [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_del]:line-through [&_a]:underline [&_a]:text-indigo-600 [&_a:hover]:text-indigo-800 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_p]:my-1 [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_h3]:font-bold [&_code]:bg-gray-200 [&_code]:dark:bg-slate-600 [&_code]:px-1 [&_code]:rounded [&_blockquote]:border-l-2 [&_blockquote]:border-gray-400 [&_blockquote]:pl-3 [&_blockquote]:italic">
+                      <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                        {announcement.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 dark:text-slate-500 italic">{t('admin.announcementPlaceholder')}</p>
+                  )}
+                </div>
+              ) : (
+                <textarea
+                  value={announcement.content || ''}
+                  onChange={(e) => setAnnouncement(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder={t('admin.announcementPlaceholder')}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none font-mono text-sm"
+                />
+              )}
+
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 dark:text-slate-500">
+                <span><code className="bg-gray-100 dark:bg-slate-700 px-1 rounded">**{t('admin.markdownBold')}**</code> → <strong>{t('admin.markdownBold')}</strong></span>
+                <span><code className="bg-gray-100 dark:bg-slate-700 px-1 rounded">*{t('admin.markdownItalic')}*</code> → <em>{t('admin.markdownItalic')}</em></span>
+                <span><code className="bg-gray-100 dark:bg-slate-700 px-1 rounded">&lt;u&gt;{t('admin.markdownUnderline')}&lt;/u&gt;</code> → <u>{t('admin.markdownUnderline')}</u></span>
+                <span><code className="bg-gray-100 dark:bg-slate-700 px-1 rounded">~~{t('admin.markdownStrikethrough')}~~</code> → <del>{t('admin.markdownStrikethrough')}</del></span>
+              </div>
             </div>
 
             <div className="flex items-center gap-4">

@@ -84,7 +84,13 @@
     "announcementVisible": "공지사항 표시 중",
     "announcementHidden": "공지사항 숨김",
     "saveAnnouncement": "공지사항 저장",
-    "announcementHint": "학생들에게 표시할 공지사항을 설정하세요. 출석 코드 입력 후 표시됩니다."
+    "announcementHint": "학생들에게 표시할 공지사항을 설정하세요. 마크다운 서식을 지원합니다. 출석 코드 입력 후 표시됩니다.",
+    "announcementPreview": "미리보기",
+    "announcementEdit": "편집",
+    "markdownBold": "굵게",
+    "markdownItalic": "기울임",
+    "markdownUnderline": "밑줄",
+    "markdownStrikethrough": "취소선"
   },
   "student": {
     "dashboard": "학생 대시보드",
