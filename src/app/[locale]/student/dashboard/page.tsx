@@ -165,7 +165,7 @@ export default function StudentDashboardPage({ params: { locale } }: { params: {
                   <span className="text-2xl">📢</span>
                   <div>
                     <h3 className="font-semibold text-blue-800 dark:text-blue-400 mb-1">{t('student.announcementTitle')}</h3>
-                    <div className="text-blue-700 dark:text-blue-300 text-sm prose-sm prose-blue dark:prose-invert max-w-none [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_del]:line-through [&_a]:underline [&_a]:text-blue-600 [&_a:hover]:text-blue-800 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_p]:my-1 [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_h3]:font-bold [&_code]:bg-blue-100 [&_code]:dark:bg-blue-900/30 [&_code]:px-1 [&_code]:rounded [&_blockquote]:border-l-2 [&_blockquote]:border-blue-400 [&_blockquote]:pl-3 [&_blockquote]:italic">
+                    <div className="prose prose-sm dark:prose-invert max-w-none text-blue-700 dark:text-blue-300 prose-headings:text-blue-800 dark:prose-headings:text-blue-300 prose-a:text-blue-600 prose-strong:text-blue-800 dark:prose-strong:text-blue-200 prose-code:text-blue-700 dark:prose-code:text-blue-300 [&_u]:underline [&_del]:line-through">
                       <ReactMarkdown rehypePlugins={[rehypeRaw]}>
                         {announcement?.content || ''}
                       </ReactMarkdown>

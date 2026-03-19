@@ -471,7 +471,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
               {showAnnouncementPreview ? (
                 <div className="w-full min-h-[7rem] px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white">
                   {announcement.content ? (
-                    <div className="prose-sm dark:prose-invert max-w-none [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_del]:line-through [&_a]:underline [&_a]:text-indigo-600 [&_a:hover]:text-indigo-800 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_p]:my-1 [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_h3]:font-bold [&_code]:bg-gray-200 [&_code]:dark:bg-slate-600 [&_code]:px-1 [&_code]:rounded [&_blockquote]:border-l-2 [&_blockquote]:border-gray-400 [&_blockquote]:pl-3 [&_blockquote]:italic">
+                    <div className="prose prose-sm dark:prose-invert max-w-none [&_u]:underline [&_del]:line-through">
                       <ReactMarkdown rehypePlugins={[rehypeRaw]}>
                         {announcement.content}
                       </ReactMarkdown>
